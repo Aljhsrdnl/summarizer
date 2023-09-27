@@ -8,3 +8,10 @@
   margin: 0;
   font-family: "Bricolage Grotesque";
 }
+
+.custom-bg {
+  background-color: #f4f8fa;
+  opacity: 1;
+  background-image: radial-gradient(#cfbbfa 1.25px, #f4f8fa 1.25px);
+  background-size: 25px 25px;
+}
