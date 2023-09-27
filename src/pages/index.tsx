@@ -1,8 +1,22 @@
 import exportAsImage from "@/utils/downloadImage";
-import { ChangeEvent, useEffect, useRef, useState } from "react";
+import { ChangeEvent, useEffect, useReducer, useRef, useState } from "react";
 import Head from "next/head";
 import summarizer from "@/utils/summarizer";
 import Link from "next/link";
+import { twMerge } from "tailwind-merge";
+
+type AppState = {
+  lawyer: boolean;
+  jack: boolean;
+  kid: boolean;
+  emoji: boolean;
+};
+
+type AppAction =
+  | { type: "lawyer" }
+  | { type: "jack" }
+  | { type: "kid" }
+  | { type: "emoji" };
 
 export default function Home() {
   const [file, setFile] = useState<File | null>();
@@ -11,7 +25,29 @@ export default function Home() {
   const [instruction, setInstruction] = useState<string>(
     "Create a summary of this text."
   );
+  function reducer(state: AppState, action: AppAction) {
+    switch (action.type) {
+      case "lawyer": {
+        return { lawyer: true, jack: false, kid: false, emoji: false };
+      }
+      case "jack": {
+        return { lawyer: false, jack: true, kid: false, emoji: false };
+      }
+      case "kid": {
+        return { lawyer: false, jack: false, kid: true, emoji: false };
+      }
+      case "emoji": {
+        return { lawyer: false, jack: false, kid: false, emoji: true };
+      }
+    }
+  }
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [currentInstruction, dispatch] = useReducer(reducer, {
+    lawyer: false,
+    jack: false,
+    kid: false,
+    emoji: false,
+  });
 
   function handleFileChange(e: ChangeEvent<HTMLInputElement>) {
     setFile(e.target.files?.[0]);
@@ -56,6 +92,16 @@ export default function Home() {
 
   function handleChangeInstruction(e: React.MouseEvent<HTMLButtonElement>) {
     setInstruction(e.currentTarget.value);
+    let name = e.currentTarget.name;
+    if (name === "jack") {
+      dispatch({ type: "jack" });
+    } else if (name === "emoji") {
+      dispatch({ type: "emoji" });
+    } else if (name === "kid") {
+      dispatch({ type: "kid" });
+    } else if (name === "lawyer") {
+      dispatch({ type: "lawyer" });
+    }
   }
 
   async function copySummary() {
@@ -76,9 +122,11 @@ export default function Home() {
           <div className="bg-white py-[1rem] px-[2rem] rounded-br-3xl rounded-bl-3xl shadow shadow-gray-200 sticky">
             <h3 className="text-gray-900 font-bold text-xl"> txt.sum</h3>
           </div>
-          <h3 className="text-[4em] text-gray-900 font-semibold leading-tight my-16 text-center">
-            <span className="py-2 hover:bg-[#eef75c]">Summarize</span> with{" "}
-            <span>Precision,</span> Powered by AI Perfection.
+          <h3 className="text-[4em] text-gray-900 font-semibold my-16 text-center">
+            <span className="py-2 bg-[#eef75c]/70">Summarize</span> with{" "}
+            <span className="py-2 hover:bg-[#7a3aff]/50">Precision,</span>{" "}
+            Powered by{" "}
+            <span className="py-2 bg-[#f17441]/30">AI Perfection</span>.
           </h3>
           <div className="flex gap-x-8">
             {/* Set the tone */}
@@ -93,29 +141,53 @@ export default function Home() {
               </div>
               <div className="">
                 <button
+                  name="lawyer"
                   value="Pretend to be a lawyer. Create a summary of this text using legal terms."
-                  className="border-2 border-white text-white px-6 py-1 rounded-full hover:text-[#f17441] hover:bg-[#eef75c] hover:border-[#eef75c] active:scale-95 transition-all ease-in-out focus:bg-[#7a3aff] focus:border-[#7a3aff] focus:text-white text-left mb-2"
+                  // className="border-2 border-white text-white px-6 py-1 rounded-full hover:text-[#f17441] hover:bg-[#eef75c] hover:border-[#eef75c] active:scale-95 transition-all ease-in-out focus:bg-[#7a3aff] focus:border-[#7a3aff] focus:text-white text-left mb-2"
+                  className={twMerge(
+                    "border-2 border-white text-white px-6 py-1 rounded-full hover:text-[#f17441] hover:bg-[#eef75c] hover:border-[#eef75c] active:scale-95 transition-all ease-in-out text-left mb-2 focus:bg-[#7a3aff] focus:border-[#7a3aff] focus:text-white",
+                    currentInstruction.lawyer &&
+                      "bg-[#7a3aff] border-[#7a3aff] text-white"
+                  )}
                   onClick={handleChangeInstruction}
                 >
                   Lawyer
                 </button>
                 <button
+                  name="jack"
                   value="Pretend to be Captain Jack Sparrow. Create a summary of this text using Captain Jack Sparrow's tone."
-                  className="border-2 border-white text-white px-6 py-1 rounded-full hover:text-[#f17441] hover:bg-[#eef75c] hover:border-[#eef75c] active:scale-95 transition-all ease-in-out focus:bg-[#7a3aff] focus:border-[#7a3aff] focus:text-white text-left mb-2"
+                  // className="border-2 border-white text-white px-6 py-1 rounded-full hover:text-[#f17441] hover:bg-[#eef75c] hover:border-[#eef75c] active:scale-95 transition-all ease-in-out focus:bg-[#7a3aff] focus:border-[#7a3aff] focus:text-white text-left mb-2"
+                  className={twMerge(
+                    "border-2 border-white text-white px-6 py-1 rounded-full hover:text-[#f17441] hover:bg-[#eef75c] hover:border-[#eef75c] active:scale-95 transition-all ease-in-out text-left mb-2 focus:bg-[#7a3aff] focus:border-[#7a3aff] focus:text-white",
+                    currentInstruction.jack &&
+                      "bg-[#7a3aff] border-[#7a3aff] text-white"
+                  )}
                   onClick={handleChangeInstruction}
                 >
                   Captain Jack Sparrow
                 </button>
                 <button
+                  name="kid"
                   value="Create a summary of this text understandable by a 5-year old"
-                  className="border-2 border-white text-white px-6 py-1 rounded-full hover:text-[#f17441] hover:bg-[#eef75c] hover:border-[#eef75c] active:scale-95 transition-all ease-in-out focus:bg-[#7a3aff] focus:border-[#7a3aff] focus:text-white text-left mb-2"
+                  // className="border-2 border-white text-white px-6 py-1 rounded-full hover:text-[#f17441] hover:bg-[#eef75c] hover:border-[#eef75c] active:scale-95 transition-all ease-in-out focus:bg-[#7a3aff] focus:border-[#7a3aff] focus:text-white text-left mb-2"
+                  className={twMerge(
+                    "border-2 border-white text-white px-6 py-1 rounded-full hover:text-[#f17441] hover:bg-[#eef75c] hover:border-[#eef75c] active:scale-95 transition-all ease-in-out text-left mb-2 focus:bg-[#7a3aff] focus:border-[#7a3aff] focus:text-white",
+                    currentInstruction.kid &&
+                      "bg-[#7a3aff] border-[#7a3aff] text-white"
+                  )}
                   onClick={handleChangeInstruction}
                 >
                   5 year-old kid.
                 </button>
                 <button
+                  name="emoji"
                   value="Create a summary of this text and add emojis at the end of the output."
-                  className="border-2 border-white text-white px-6 py-1 rounded-full hover:text-[#f17441] hover:bg-[#eef75c] hover:border-[#eef75c] active:scale-95 transition-all ease-in-out focus:bg-[#7a3aff] focus:border-[#7a3aff] focus:text-white text-left"
+                  // className="border-2 border-white text-white px-6 py-1 rounded-full hover:text-[#f17441] hover:bg-[#eef75c] hover:border-[#eef75c] active:scale-95 transition-all ease-in-out focus:bg-[#7a3aff] focus:border-[#7a3aff] focus:text-white text-left"
+                  className={twMerge(
+                    "border-2 border-white text-white px-6 py-1 rounded-full hover:text-[#f17441] hover:bg-[#eef75c] hover:border-[#eef75c] active:scale-95 transition-all ease-in-out text-left mb-2 focus:bg-[#7a3aff] focus:border-[#7a3aff] focus:text-white",
+                    currentInstruction.emoji &&
+                      "bg-[#7a3aff] border-[#7a3aff] text-white"
+                  )}
                   onClick={handleChangeInstruction}
                 >
                   Add emojis at the end.
