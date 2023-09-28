@@ -1,9 +1,8 @@
-import exportAsImage from "@/utils/downloadImage";
 import { ChangeEvent, useEffect, useReducer, useRef, useState } from "react";
 import Head from "next/head";
-import summarizer from "@/utils/summarizer";
 import Link from "next/link";
 import Image from "next/image";
+import { motion } from "framer-motion";
 import { twMerge } from "tailwind-merge";
 
 type AppState = {
@@ -114,37 +113,64 @@ export default function Home() {
       </Head>
       <div className="max-w-7xl mx-auto px-[2rem] lg:px-[4rem] w-full h-full ">
         <div className="relative">
-          <Image
+          <motion.img
+            initial={{ opacity: 0, scale: 0 }}
+            animate={{ opacity: 1, scale: 1, rotate: -180 }}
+            transition={{
+              delay: 2.2,
+              repeat: Infinity,
+              repeatType: "reverse",
+              duration: 2,
+            }}
             src="/assets/shape-1.png"
-            width={130}
-            height={130}
             alt="geometric shape"
-            className="absolute lg:top-20 top-12 -left-8 lg:left-0 animate-pulse"
+            className="absolute lg:top-20 top-12 -left-8 lg:left-0 animate-pulse w-[130px]"
           />
-          <Image
+          <motion.img
+            initial={{ opacity: 0, scale: 0 }}
+            animate={{ opacity: 1, scale: 1, rotate: 180 }}
+            transition={{
+              delay: 2.6,
+              repeat: Infinity,
+              repeatType: "reverse",
+              duration: 2,
+            }}
             src="/assets/shape-2.png"
-            width={100}
-            height={100}
             alt="geometric shape"
-            className="absolute lg:top-[12em] lg:right-4 top-[20em] -right-4 animate-pulse"
+            className="absolute lg:top-[12em] lg:right-4 top-[20em] -right-4  w-[100px]"
           />
         </div>
         <div className="w-full h-full">
-          <div className="bg-white py-[1rem] px-[2rem] rounded-br-3xl rounded-bl-3xl shadow shadow-gray-200 sticky">
+          <motion.div
+            initial={{ y: -60 }}
+            animate={{ y: 0 }}
+            transition={{ delay: 1.4, type: "spring", bounce: 0.6 }}
+            className="bg-white py-[1rem] px-[2rem] rounded-br-3xl rounded-bl-3xl shadow shadow-gray-200 sticky"
+          >
             <h3 className="text-gray-900 font-bold text-xl drop-shadow-[1px_1px_5px_rgba(122,58,255,0.75)]">
               {" "}
               txt.sum
             </h3>
-          </div>
-          <h3 className="text-[2em] md:text-[3em] lg:text-[4em] text-gray-900 font-semibold my-24 text-center">
+          </motion.div>
+          <motion.h3
+            initial={{ scale: 2, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ delay: 0.4 }}
+            className="text-[2em] md:text-[3em] lg:text-[4em] text-gray-900 font-semibold my-24 text-center"
+          >
             <span className="py-2 bg-[#eef75c]/70">Summarize</span> with{" "}
             <span className="py-2 hover:bg-[#7a3aff]/50">Precision,</span>{" "}
             Powered by{" "}
             <span className="py-2 bg-[#f17441]/30">AI Perfection</span>.
-          </h3>
+          </motion.h3>
           <div className="flex flex-col gap-y-8 lg:flex-row lg:gap-x-8">
             {/* Set the tone */}
-            <div className="w-full lg:w-1/3 bg-[#f17441] rounded-[2rem] p-[2rem]">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 1.6 }}
+              className="w-full lg:w-1/3 bg-[#f17441] rounded-[2rem] p-[2rem]"
+            >
               <div className="flex items-center gap-x-2 mb-6">
                 <div className="w-[2.5rem] h-[2.5rem] rounded-full bg-[#eef75c] flex items-center justify-center ">
                   <p className="text-xl lg:text-2xl font-semibold text-[#f17441]">
@@ -209,9 +235,14 @@ export default function Home() {
                   Add emojis at the end.
                 </button>
               </div>
-            </div>
+            </motion.div>
             {/* Upload txt file */}
-            <div className="w-full lg:w-2/3 bg-white rounded-[2rem] p-[2rem] border-2 border-[#7a3aff] bg-[#7a3aff]/30 lg:bg-[#7a3aff]/20">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 2.1 }}
+              className="w-full lg:w-2/3 bg-white rounded-[2rem] p-[2rem] border-2 border-[#7a3aff] bg-[#7a3aff]/30 lg:bg-[#7a3aff]/20"
+            >
               <div className="flex items-center gap-x-2">
                 <div className="w-[2.5rem] h-[2.5rem] rounded-full bg-[#7a3aff] flex items-center justify-center">
                   <p className="text-xl lg:text-2xl font-semibold text-white">
@@ -247,7 +278,7 @@ export default function Home() {
                   </button>
                 </label>
               </div>
-            </div>
+            </motion.div>
           </div>
           {/* <p>Upload a .txt file and generate a summary.</p> */}
 
