@@ -53,42 +53,36 @@ export default function Home() {
   function handleFileChange(e: ChangeEvent<HTMLInputElement>) {
     setFile(e.target.files?.[0]);
   }
-  function handleSummarizeClick(file: File) {
+  async function handleSummarizeClick(file: File) {
     //read the content of file
-    const fileReader = new FileReader();
-    fileReader.readAsText(file);
-    fileReader.onload = async () => {
-      setIsLoading(true);
-      const fileContent = convertToString(fileReader.result);
-      console.log(fileContent);
-      setText(fileContent);
-      // create a function on Text Splitting, and Summarization
+    setIsLoading(true);
+    const text = await file?.text();
+    const response = await fetch("/api/summarize", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ text: text, instruction: instruction }),
+    })
+      .then((response) => response.json())
+      .then((text) => {
+        setIsLoading(false);
+        setSummary(text.summary);
+        // console.log(text.summary);
+      });
+    // const fileReader = new FileReader();
+    // fileReader.readAsText(file);
+    // fileReader.onload = async () => {
+    //   setIsLoading(true);
+    //   const fileContent = convertToString(fileReader.result);
+    //   console.log(fileContent);
+    //   setText(fileContent);
+    //   // create a function on Text Splitting, and Summarization
 
-      const result = await summarizer(fileContent, instruction);
-      setIsLoading(false);
-      setSummary(result.text);
-    };
-  }
-
-  function convertToString(input: string | ArrayBuffer | null): string {
-    // Check if the input is null
-    if (input === null) {
-      return ""; // Return empty string or any default value you want
-    }
-
-    // Check if the input is already a string
-    if (typeof input === "string") {
-      return input; // No conversion needed, return the input as is
-    } else {
-      console.log("NO RESULT FOUND");
-    }
-
-    // Convert ArrayBuffer to string using appropriate encoding (e.g., UTF-8)
-    const uint8Array = new Uint8Array(input!);
-    const decoder = new TextDecoder("utf-8");
-    const convertedString = decoder.decode(uint8Array);
-
-    return convertedString;
+    //   const result = await summarizer(fileContent, instruction);
+    //   setIsLoading(false);
+    //   setSummary(result.text);
+    // };
   }
 
   function handleChangeInstruction(e: React.MouseEvent<HTMLButtonElement>) {
@@ -137,7 +131,10 @@ export default function Home() {
         </div>
         <div className="w-full h-full">
           <div className="bg-white py-[1rem] px-[2rem] rounded-br-3xl rounded-bl-3xl shadow shadow-gray-200 sticky">
-            <h3 className="text-gray-900 font-bold text-xl"> txt.sum</h3>
+            <h3 className="text-gray-900 font-bold text-xl drop-shadow-[1px_1px_5px_rgba(122,58,255,0.75)]">
+              {" "}
+              txt.sum
+            </h3>
           </div>
           <h3 className="text-[2em] md:text-[3em] lg:text-[4em] text-gray-900 font-semibold my-24 text-center">
             <span className="py-2 bg-[#eef75c]/70">Summarize</span> with{" "}
@@ -284,7 +281,7 @@ export default function Home() {
         </div>
         <footer className="bg-white mt-16 py-8 text-center rounded-tl-3xl rounded-tr-3xl">
           A personal project of{" "}
-          <Link href="alejah.vercel.app" className="bg-[#eef75c]/50 py-1">
+          <Link href="alejah.vercel.app" className="bg-[#7a3aff]/20 py-1">
             Alejah
           </Link>
         </footer>

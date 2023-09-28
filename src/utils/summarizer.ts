@@ -6,7 +6,7 @@ dotenv.config();
 
 const llm = new OpenAI({
   temperature: 0.7,
-  openAIApiKey: process.env.NEXT_PUBLIC_OPENAI_API_KEY,
+  openAIApiKey: process.env.OPENAI_API_KEY,
 });
 
 const textSplitter = new RecursiveCharacterTextSplitter({
