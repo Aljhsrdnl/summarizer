@@ -311,10 +311,11 @@ export default function Home() {
           )}
         </div>
         <footer className="bg-white mt-16 py-8 text-center rounded-tl-3xl rounded-tr-3xl">
-          A personal project of{" "}
+          &copy; 2023{" "}
           <Link href="alejah.vercel.app" className="bg-[#7a3aff]/20 py-1">
-            Alejah
-          </Link>
+            Alejah Sardiniola
+          </Link>{" "}
+          • txt.sum • All Rights Reserved
         </footer>
       </div>
     </div>
